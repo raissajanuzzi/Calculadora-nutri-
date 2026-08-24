@@ -67,6 +67,16 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){
 <button onClick="{{ toggleView }}" style="flex:none;background:transparent;border:1px solid rgba(243,242,237,.5);color:#f3f2ed;padding:12px 14px;min-height:44px;border-radius:2px;font-size:clamp(10px,2.6vw,12px);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;white-space:nowrap" style-hover="background:#f3f2ed;color:#8e947e">{{ viewBtn }}</button>
 </div>
 
+<sc-if value="{{ temAviso }}" hint-placeholder-val="{{ false }}">
+<div style="background:#3f4636;color:#f3f2ed;padding:16px 20px;display:flex;gap:14px;align-items:flex-start">
+<div style="flex:1;min-width:0">
+<div style="font-family:'Poppins',sans-serif;font-weight:300;font-size:15px;line-height:1.3">{{ avisoTitulo }}</div>
+<div style="font-size:13px;line-height:1.55;margin-top:5px;opacity:.9;max-width:560px">{{ avisoTexto }}</div>
+</div>
+<button onClick="{{ fecharAviso }}" style="flex:none;background:transparent;border:1px solid rgba(243,242,237,.45);color:#f3f2ed;border-radius:2px;padding:9px 14px;min-height:44px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#f3f2ed;color:#3f4636">Entendi</button>
+</div>
+</sc-if>
+
 <sc-if value="{{ isCalc }}" hint-placeholder-val="{{ true }}">
 <div style="padding:22px 20px 0">
 <div class="passos" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0;margin-bottom:22px">
@@ -168,9 +178,9 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){
 <div style="padding:22px 24px 20px;border-bottom:1px solid #f0f1eb">
 <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8e947e;margin-bottom:8px">{{ foodCat }}</div>
 <div style="font-family:'Poppins',sans-serif;font-weight:300;font-size:27px;line-height:1.2;color:#3f4636">{{ foodName }}</div>
-<div style="display:flex;gap:0;margin-top:18px;border:1px solid #d3d8c8;border-radius:2px;overflow:hidden;width:fit-content;max-width:100%;flex-wrap:wrap">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px;width:100%;max-width:380px">
 <sc-for list="{{ modos }}" as="mo" hint-placeholder-count="2">
-<button onClick="{{ mo.on }}" style="padding:11px 18px;min-height:44px;border:none;font-size:13px;cursor:pointer;white-space:nowrap;background:{{ mo.bg }};color:{{ mo.fg }}">{{ mo.label }}</button>
+<button onClick="{{ mo.on }}" style="padding:11px 10px;min-height:46px;border:1px solid {{ mo.bd }};border-radius:2px;font-size:clamp(12px,3.2vw,13px);line-height:1.25;cursor:pointer;text-align:center;background:{{ mo.bg }};color:{{ mo.fg }}">{{ mo.label }}</button>
 </sc-for>
 </div>
 </div>
@@ -480,6 +490,23 @@ class Component extends DCLogic {
         marmitasStr: s.marmitas>0 ? String(s.marmitas) : '7',
         compras: Array.isArray(s.compras)?s.compras:[]}));
     }catch(e){}
+    this.checaVersao();
+  }
+
+  // Busca versao.json e avisa quando houver uma versão nova
+  async checaVersao(){
+    try{
+      const r = await fetch('./versao.json', {cache:'no-store'});
+      if(!r.ok) return;
+      const v = await r.json();
+      if(!v || !v.versao) return;
+      const vista = localStorage.getItem('nutricalc.versaoVista');
+      if(String(v.versao) !== vista) this.setState({aviso:v});
+    }catch(e){}
+  }
+  fechaAviso(){
+    try{ localStorage.setItem('nutricalc.versaoVista', String(this.state.aviso.versao)); }catch(e){}
+    this.setState({aviso:null});
   }
   persist(extra){
     const s = Object.assign({}, this.state, extra||{});
@@ -556,6 +583,11 @@ class Component extends DCLogic {
     }));
 
     return {
+      temAviso: !!st.aviso,
+      avisoTitulo: st.aviso ? (st.aviso.titulo || 'Aplicativo atualizado') : '',
+      avisoTexto: st.aviso ? (st.aviso.texto || '') : '',
+      fecharAviso: ()=>this.fechaAviso(),
+
       isCalc: st.view==='calc', isAjustes: st.view==='ajustes',
       viewBtn: st.view==='calc' ? 'Ajustar fatores' : 'Voltar',
       toggleView: ()=>this.setState({view: st.view==='calc'?'ajustes':'calc'}),

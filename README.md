@@ -22,3 +22,17 @@ Depois de instalado funciona offline.
 ## Atualizar
 
 Suba os arquivos novos por cima dos antigos no mesmo repositório. O app busca sempre a versão mais recente quando há internet.
+
+## Avisar sobre uma atualização
+
+Abra o arquivo `versao.json` e mude os três campos:
+
+```json
+{
+  "versao": "1.1",
+  "titulo": "O que mudou",
+  "texto": "Escreva aqui o aviso que a pessoa vai ler."
+}
+```
+
+Troque o número da `versao` sempre que quiser avisar de novo — é isso que dispara o aviso. Quem já tinha visto o aviso anterior verá o novo; quem clicar em "Entendi" não vê mais aquele.
