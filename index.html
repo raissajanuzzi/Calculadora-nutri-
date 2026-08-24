@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#8e947e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Calc Nutri">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&amp;family=Montserrat:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+html,body{height:auto!important;min-height:100%}
+#dc-root,#dc-root>.sc-host{height:auto!important}
+*{box-sizing:border-box}
+body{margin:0;background:#f3f2ed;font-family:'Montserrat',sans-serif;font-weight:400;color:#3f4636;-webkit-text-size-adjust:100%}
+img{max-width:100%;height:auto}
+a{color:#5c6650;text-decoration:none}
+a:hover{color:#3f4636}
+input,button,select{font-family:inherit}
+input:focus{outline:2px solid #8e947e;outline-offset:1px}
+::placeholder{color:#9aa08d}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+.scrl::-webkit-scrollbar{width:6px}
+.scrl::-webkit-scrollbar-thumb{background:#c7cbb9;border-radius:3px}
+@media (max-width:860px){.two-col{grid-template-columns:1fr!important}}
+@media (max-width:640px){.passos{grid-template-columns:1fr!important}.passos>div{padding-right:0!important;flex-direction:row!important;align-items:flex-start!important;gap:11px!important}.passos>div>div{flex:none!important}.passos>div>div>span:last-child{display:none!important}}
+</style>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',function(){
+  try{
+    if(window.caches&&caches.keys){caches.keys().then(function(ks){ks.forEach(function(k){if(k!=='nutricalc-v2')caches.delete(k)})}).catch(function(){})}
+    navigator.serviceWorker.register('./sw.js').then(function(r){if(r&&r.update)r.update()}).catch(function(){});
+  }catch(e){}
+})}
+</script>
+</helmet>
+<div style="max-width:1100px;margin:0 auto;padding-bottom:56px">
+
+<div style="background:#8e947e;color:#f3f2ed;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:20">
+<div style="display:flex;align-items:center;gap:14px;min-width:0">
+<img src="./logo-rj-cream.jpg" alt="Raíssa Januzzi Nutricionista" style="height:38px;width:auto;display:block;object-fit:contain">
+<div style="border-left:1px solid rgba(243,242,237,.35);padding-left:14px;min-width:0">
+
+<div style="font-family:'Poppins',sans-serif;font-weight:300;font-size:16px;line-height:1.2;white-space:nowrap;display:flex;align-items:center">Calculadora da Nutri</div>
+</div>
+</div>
+<button onClick="{{ toggleView }}" style="background:transparent;border:1px solid rgba(243,242,237,.5);color:#f3f2ed;padding:9px 14px;border-radius:2px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap" style-hover="background:#f3f2ed;color:#8e947e">{{ viewBtn }}</button>
+</div>
+
+<sc-if value="{{ isCalc }}" hint-placeholder-val="{{ true }}">
+<div style="padding:22px 20px 0">
+<div class="passos" style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-bottom:22px">
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;align-items:center;gap:0">
+<span style="flex:none;width:26px;height:26px;border-radius:50%;background:#8e947e;color:#f3f2ed;font-family:'Poppins',sans-serif;font-weight:300;font-size:13px;display:flex;align-items:center;justify-content:center">1</span>
+<span style="flex:1;height:1px;background:#c7cbb9"></span>
+</div>
+<span style="font-size:13px;line-height:1.5;color:#4a5140;padding-right:24px">Escolha o alimento na lista ou pela busca</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;align-items:center;gap:0">
+<span style="flex:none;width:26px;height:26px;border-radius:50%;background:#8e947e;color:#f3f2ed;font-family:'Poppins',sans-serif;font-weight:300;font-size:13px;display:flex;align-items:center;justify-content:center">2</span>
+<span style="flex:1;height:1px;background:#c7cbb9"></span>
+</div>
+<span style="font-size:13px;line-height:1.5;color:#4a5140;padding-right:24px">Diga o preparo e se o peso que você tem é do cru ou do pronto</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;align-items:center;gap:0">
+<span style="flex:none;width:26px;height:26px;border-radius:50%;background:#8e947e;color:#f3f2ed;font-family:'Poppins',sans-serif;font-weight:300;font-size:13px;display:flex;align-items:center;justify-content:center">3</span>
+<span style="flex:1;height:1px;background:#c7cbb9"></span>
+</div>
+<span style="font-size:13px;line-height:1.5;color:#4a5140">Informe os gramas e veja quanto pesar, com os nutrientes da porção</span>
+</div>
+</div>
+<div style="position:relative">
+<input type="search" value="{{ q }}" onChange="{{ onQ }}" placeholder="Buscar alimento — macarrão, frango, batata…" style="width:100%;padding:15px 16px;border:1px solid #d3d8c8;border-radius:3px;background:#fff;font-size:16px;color:#3f4636">
+</div>
+<div class="scrl" style="display:flex;gap:8px;margin-top:12px;overflow-x:auto;padding-bottom:4px">
+<sc-for list="{{ cats }}" as="c" hint-placeholder-count="6">
+<button onClick="{{ c.on }}" style="flex:none;padding:8px 14px;border-radius:999px;font-size:12.5px;letter-spacing:.02em;cursor:pointer;white-space:nowrap;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }}">{{ c.label }}</button>
+</sc-for>
+</div>
+</div>
+
+<div class="two-col" style="display:grid;grid-template-columns:340px 1fr;gap:24px;padding:20px">
+
+<div style="min-width:0">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8e947e;margin-bottom:10px">{{ listCount }}</div>
+<div class="scrl" style="max-height:520px;overflow-y:auto;border:1px solid #e2e5da;border-radius:3px;background:#fff">
+<sc-for list="{{ list }}" as="f" hint-placeholder-count="7">
+<div style="display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px;border-bottom:1px solid #f0f1eb;background:{{ f.rowBg }}">
+<button onClick="{{ f.fav }}" title="Favoritar" style="flex:none;width:26px;height:26px;border:none;background:transparent;cursor:pointer;font-size:15px;line-height:1;color:{{ f.starFg }}">{{ f.star }}</button>
+<button onClick="{{ f.pick }}" style="flex:1;min-width:0;text-align:left;border:none;background:transparent;cursor:pointer;padding:0">
+<div style="font-size:14.5px;color:#3f4636;line-height:1.3">{{ f.n }}</div>
+<div style="font-size:11px;color:#8e947e;margin-top:3px;letter-spacing:.02em">{{ f.sub }}</div>
+</button>
+</div>
+</sc-for>
+<sc-if value="{{ listEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="padding:28px 18px;text-align:center;font-size:13.5px;color:#8e947e;line-height:1.6">Nenhum alimento com esse nome.<br>Tente “arroz”, “peito” ou “batata”.</div>
+</sc-if>
+</div>
+
+<sc-if value="{{ hasHist }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:22px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8e947e">Histórico</div>
+<button onClick="{{ clearHist }}" style="border:none;background:transparent;color:#8e947e;font-size:11px;cursor:pointer;text-decoration:underline">limpar</button>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ hist }}" as="h" hint-placeholder-count="3">
+<button onClick="{{ h.on }}" style="text-align:left;border:1px solid #e2e5da;background:#fff;border-radius:3px;padding:11px 13px;cursor:pointer;display:flex;flex-direction:column;gap:3px" style-hover="border-color:#8e947e">
+<span style="font-size:13.5px;color:#3f4636">{{ h.n }}</span>
+<span style="font-size:11.5px;color:#8e947e">{{ h.line }}</span>
+</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</div>
+
+<div style="min-width:0">
+<sc-if value="{{ hasFood }}" hint-placeholder-val="{{ true }}">
+<div style="background:#fff;border:1px solid #e2e5da;border-radius:4px;overflow:hidden">
+
+<div style="padding:22px 24px 20px;border-bottom:1px solid #f0f1eb">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8e947e;margin-bottom:8px">{{ foodCat }}</div>
+<div style="font-family:'Poppins',sans-serif;font-weight:300;font-size:27px;line-height:1.2;color:#3f4636">{{ foodName }}</div>
+</div>
+
+<div style="padding:20px 24px;border-bottom:1px solid #f0f1eb;display:flex;flex-direction:column;gap:18px">
+<div>
+<div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8e947e;margin-bottom:9px">Preparo</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{ methods }}" as="m" hint-placeholder-count="3">
+<button onClick="{{ m.on }}" style="padding:10px 16px;border-radius:2px;font-size:13.5px;cursor:pointer;border:1px solid {{ m.bd }};background:{{ m.bg }};color:{{ m.fg }}">{{ m.label }}</button>
+</sc-for>
+</div>
+</div>
+<div>
+<div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8e947e;margin-bottom:9px">O que você tem na mão</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<sc-for list="{{ dirs }}" as="d" hint-placeholder-count="2">
+<button onClick="{{ d.on }}" style="flex:1 1 180px;padding:12px 14px;border-radius:2px;font-size:13.5px;cursor:pointer;text-align:left;line-height:1.35;border:1px solid {{ d.bd }};background:{{ d.bg }};color:{{ d.fg }}">{{ d.label }}</button>
+</sc-for>
+</div>
+</div>
+</div>
+
+<div style="padding:22px 24px;border-bottom:1px solid #f0f1eb">
+<div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8e947e;margin-bottom:10px">{{ qtyLabel }}</div>
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+<div style="display:flex;align-items:baseline;border:1px solid #d3d8c8;border-radius:3px;background:#fbfbf8;padding:6px 14px 6px 16px">
+<input type="text" inputMode="decimal" value="{{ qtyStr }}" onChange="{{ onQty }}" aria-label="Quantidade em gramas" style="width:110px;border:none;background:transparent;font-family:'Poppins',sans-serif;font-weight:300;font-size:34px;color:#3f4636;padding:4px 0">
+<span style="font-size:15px;color:#8e947e;margin-left:2px">g</span>
+</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<sc-for list="{{ quick }}" as="k" hint-placeholder-count="4">
+<button onClick="{{ k.on }}" style="padding:8px 12px;border:1px solid #d3d8c8;background:#fff;border-radius:2px;font-size:12.5px;color:#5c6650;cursor:pointer" style-hover="border-color:#8e947e;background:#f3f2ed">{{ k.label }}</button>
+</sc-for>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;margin-top:18px;flex-wrap:wrap">
+<span style="font-size:12.5px;color:#8e947e">Cozinhar para</span>
+<div style="display:flex;gap:6px">
+<sc-for list="{{ people }}" as="p" hint-placeholder-count="3">
+<button onClick="{{ p.on }}" style="width:40px;height:40px;border-radius:2px;font-size:14px;cursor:pointer;border:1px solid {{ p.bd }};background:{{ p.bg }};color:{{ p.fg }}">{{ p.label }}</button>
+</sc-for>
+</div>
+<span style="font-size:12.5px;color:#8e947e">{{ peopleWord }}</span>
+</div>
+</div>
+
+<div style="background:#8e947e;color:#f3f2ed;padding:26px 24px">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin-bottom:6px">{{ outTitle }}</div>
+<div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+<span style="font-family:'Poppins',sans-serif;font-weight:300;font-size:clamp(44px,9vw,64px);line-height:1.05">{{ outValue }}</span>
+<span style="font-size:20px;opacity:.9">g</span>
+</div>
+<div style="font-size:14px;line-height:1.6;margin-top:12px;opacity:.95;max-width:440px">{{ outLine }}</div>
+<div style="font-size:11.5px;letter-spacing:.04em;margin-top:8px;opacity:.75">{{ fonte }}</div>
+<sc-if value="{{ hasMedida }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(243,242,237,.28);font-size:13.5px;line-height:1.55;opacity:.95">{{ medida }}</div>
+</sc-if>
+<div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+<button onClick="{{ saveHist }}" style="border:1px solid rgba(243,242,237,.6);background:transparent;color:#f3f2ed;padding:10px 16px;border-radius:2px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#f3f2ed;color:#8e947e">Guardar no histórico</button>
+<button onClick="{{ flip }}" style="border:1px solid rgba(243,242,237,.6);background:transparent;color:#f3f2ed;padding:10px 16px;border-radius:2px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#f3f2ed;color:#8e947e">Inverter</button>
+</div>
+</div>
+
+<div style="padding:22px 24px;background:#f7f7f3">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8e947e;margin-bottom:14px">{{ macroTitle }}</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:12px">
+<sc-for list="{{ macros }}" as="m" hint-placeholder-count="5">
+<div style="background:#fff;border:1px solid #e6e8de;border-radius:3px;padding:13px 14px">
+<div style="font-family:'Poppins',sans-serif;font-weight:300;font-size:22px;color:#3f4636;line-height:1.1">{{ m.v }}</div>
+<div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#8e947e;margin-top:5px">{{ m.l }}</div>
+</div>
+</sc-for>
+</div>
+<div style="font-size:11.5px;color:#9aa08d;margin-top:12px;line-height:1.5">Valores da tabela TACO, calculados sobre o peso cru equivalente. O cozimento muda o peso, não os nutrientes.</div>
+</div>
+
+<sc-if value="{{ hasDica }}" hint-placeholder-val="{{ false }}">
+<div style="padding:20px 24px;border-top:1px solid #eceee5;display:flex;gap:14px;align-items:flex-start">
+<span style="flex:none;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8e947e;padding-top:2px">Dica</span>
+<span style="font-size:14px;line-height:1.65;color:#4a5140">{{ dica }}</span>
+</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAjustes }}" hint-placeholder-val="{{ false }}">
+<div style="padding:24px 20px">
+<div style="font-family:'Poppins',sans-serif;font-weight:300;font-size:26px;color:#3f4636;margin-bottom:8px">Fatores de conversão</div>
+<div style="font-size:14px;line-height:1.65;color:#4a5140;max-width:620px">Cada número é quanto 1 g cru rende depois do preparo. Macarrão 2,30 significa que 100 g crus viram 230 g cozidos. Edite o que quiser — fica salvo neste aparelho.</div>
+<div style="margin-top:16px;padding:18px 20px;background:#fff;border:1px solid #e2e5da;border-radius:3px;max-width:720px;font-size:13.5px;line-height:1.7;color:#4a5140">
+<div style="font-family:'Poppins',sans-serif;font-size:15px;color:#3f4636;margin-bottom:8px">De onde vem cada fator</div>
+<p style="margin:0 0 10px"><b>TACO</b> — deduzido da Tabela Brasileira de Composição de Alimentos, 4ª edição (NEPA/Unicamp, 2011) pela conservação da matéria seca: comparando a umidade do alimento cru e do preparado, chega-se ao peso que 100 g crus atingem depois do preparo.</p>
+<p style="margin:0 0 10px"><b>Referência</b> — valor usual de técnica dietética, usado onde a TACO não traz o par cru/preparado, ou onde a dedução não se sustenta.</p>
+<p style="margin:0 0 10px">O cálculo por matéria seca falha justamente em feijões, grãos e massas: a amostra cozida da TACO é medida com o caldo e a água absorvida, o que levaria o feijão carioca a 4,39 em vez dos 2,4 que a panela realmente entrega quando escorrido. Nesses grupos os fatores continuam sendo valores de referência.</p>
+<p style="margin:0">Em carnes, aves e peixes a dedução funciona bem e foi adotada — inclusive quando contraria o senso comum: costela assada rende 0,83 porque a gordura derretida permanece na peça, e camarão cozido cai para 0,51.</p>
+</div>
+<div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;align-items:center">
+<input type="search" value="{{ ajQ }}" onChange="{{ onAjQ }}" placeholder="Filtrar alimento" style="flex:1 1 240px;padding:12px 14px;border:1px solid #d3d8c8;border-radius:3px;background:#fff;font-size:15px">
+<button onClick="{{ resetOv }}" style="padding:12px 16px;border:1px solid #d3d8c8;background:#fff;border-radius:2px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#5c6650;cursor:pointer" style-hover="border-color:#8e947e">Restaurar padrão</button>
+</div>
+<div style="font-size:12px;color:#8e947e;margin-top:10px">{{ ovCount }}</div>
+<div style="margin-top:18px;display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ ajList }}" as="f" hint-placeholder-count="8">
+<div style="background:#fff;border:1px solid #e2e5da;border-radius:3px;padding:14px 16px;display:grid;grid-template-columns:minmax(150px,240px) 1fr;gap:14px;align-items:center">
+<div>
+<div style="font-size:14.5px;color:#3f4636;line-height:1.3">{{ f.n }}</div>
+<div style="font-size:11px;color:#8e947e;margin-top:3px">{{ f.c }}</div>
+</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<sc-for list="{{ f.rows }}" as="r" hint-placeholder-count="2">
+<label style="display:flex;align-items:center;gap:7px;border:1px solid {{ r.bd }};border-radius:2px;padding:6px 10px;background:{{ r.bg }}">
+<span style="display:flex;flex-direction:column;gap:2px;min-width:70px"><span style="font-size:12px;color:#5c6650">{{ r.label }}</span><span style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#a3a893">{{ r.src }}</span></span>
+<input type="text" inputMode="decimal" value="{{ r.value }}" onChange="{{ r.on }}" style="width:62px;border:none;background:transparent;font-size:15px;color:#3f4636;text-align:right">
+</label>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="margin-top:28px;padding:18px 20px;background:#eceee5;border-radius:3px;font-size:13px;line-height:1.7;color:#4a5140;max-width:720px">Para instalar no celular: abra este endereço no navegador, toque em Compartilhar (iPhone) ou no menu (Android) e escolha “Adicionar à Tela de Início”. Depois disso funciona offline.</div>
+</div>
+</sc-if>
+
+<div style="text-align:center;padding:32px 20px 8px;font-size:11.5px;color:#a9ad9c;line-height:1.7">Raíssa Januzzi Nutricionista<br>Não substitui a orientação individual do seu nutricionista.</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:900}}">
+const DB = [
+{id:'macarrao',n:'Macarrão (massa seca)',c:'Massas',m:{cozido:2.30},k:371,p:10,ch:77.9,g:1.3,f:2.9,med:['1 escumadeira cheia',90,'cozido'],d:'Pese sempre cru. A massa para de crescer quando você escorre — deixe al dente para o fator ficar próximo de 2,3.'},
+{id:'macarrao_int',n:'Macarrão integral',c:'Massas',m:{cozido:2.40},k:350,p:13,ch:71,g:2.5,f:8,med:['1 escumadeira cheia',90,'cozido']},
+{id:'massa_fresca',n:'Massa fresca',c:'Massas',m:{cozido:1.80},k:288,p:11,ch:54,g:3.2,f:2.4},
+{id:'lasanha',n:'Massa de lasanha (seca)',c:'Massas',m:{cozido:2.20},k:369,p:12,ch:75,g:1.5,f:3},
+{id:'lasanha_fresca',n:'Massa de lasanha fresca',c:'Massas',m:{cozido:1.36},t:['cozido'],k:220,p:7,ch:45.1,g:1.3,f:1.6},
+{id:'macarrao_arroz',n:'Macarrão de arroz',c:'Massas',m:{cozido:2.50},k:364,p:6.6,ch:80.2,g:0.6,f:1.6},
+{id:'arroz_branco',n:'Arroz branco polido',c:'Arroz e grãos',m:{cozido:2.50},k:358,p:7.2,ch:78.8,g:0.3,f:1.6,med:['4 colheres de sopa',100,'cozido'],d:'Fator com 2 medidas de água para 1 de arroz. Panela de pressão rende um pouco menos.'},
+{id:'arroz_integral',n:'Arroz integral',c:'Arroz e grãos',m:{cozido:2.94},t:['cozido'],k:360,p:7.3,ch:77.5,g:1.9,f:4.8,med:['4 colheres de sopa',105,'cozido'],d:'Fator alto porque o arroz integral absorve mais água que o branco.'},
+{id:'arroz_parb',n:'Arroz parboilizado',c:'Arroz e grãos',m:{cozido:2.60},k:356,p:7.7,ch:78.8,g:0.4,f:1.7},
+{id:'quinoa',n:'Quinoa em grãos',c:'Arroz e grãos',m:{cozido:3.00},k:368,p:14.1,ch:64.2,g:6.1,f:7,med:['3 colheres de sopa',75,'cozido']},
+{id:'cuscuz',n:'Cuscuz / flocão de milho',c:'Arroz e grãos',m:{cozido:2.50},k:375,p:6.9,ch:82.4,g:1.4,f:5.5},
+{id:'aveia',n:'Aveia em flocos',c:'Cereais',m:{cozido:3.00},k:394,p:13.9,ch:66.6,g:8.5,f:9.1,med:['2 colheres de sopa',30,'cru']},
+{id:'milho_verde',n:'Milho verde em grãos',c:'Cereais',m:{cozido:1.00},k:138,p:6.6,ch:28.6,g:0.6,f:3.9},
+{id:'feijao_carioca',n:'Feijão carioca',c:'Feijões',m:{cozido:2.40},k:329,p:20,ch:61.2,g:1.3,f:18.4,med:['1 concha média',140,'cozido'],d:'Deixe de molho 8 h e troque a água. O fator considera o feijão escorrido, sem o caldo.'},
+{id:'feijao_preto',n:'Feijão preto',c:'Feijões',m:{cozido:2.40},k:324,p:21.3,ch:58.8,g:1.2,f:21.8,med:['1 concha média',140,'cozido']},
+{id:'feijao_branco',n:'Feijão branco',c:'Feijões',m:{cozido:2.40},k:330,p:20,ch:60,g:1.2,f:19},
+{id:'lentilha',n:'Lentilha',c:'Feijões',m:{cozido:2.40},k:339,p:23,ch:62,g:0.8,f:16,med:['1 concha média',130,'cozido']},
+{id:'grao_bico',n:'Grão-de-bico',c:'Feijões',m:{cozido:2.50,assado:1.90,'air fryer':1.85},k:355,p:21,ch:57.9,g:5.4,f:12.4,med:['1 concha média',135,'cozido'],d:'Para o grão-de-bico crocante, cozinhe primeiro e depois asse: o fator já inclui as duas etapas.'},
+{id:'ervilha_seca',n:'Ervilha seca',c:'Feijões',m:{cozido:2.40},k:340,p:22,ch:60,g:1.2,f:15},
+{id:'soja',n:'Soja em grãos',c:'Feijões',m:{cozido:2.30},k:405,p:34,ch:30,g:18,f:20},
+{id:'coxao_mole',n:'Coxão mole sem gordura',c:'Carnes',m:{cozido:0.75,grelhado:0.72,assado:0.70,refogado:0.70},t:['cozido'],k:169,p:21.2,ch:0,g:8.7,f:0,d:'Corte em bifes de espessura igual: peças finas perdem mais água e o rendimento cai.'},
+{id:'patinho',n:'Patinho sem gordura',c:'Carnes',m:{grelhado:0.60,cozido:0.72,assado:0.66,refogado:0.70},t:['grelhado'],k:133,p:21.7,ch:0,g:4.5,f:0,d:'Grelhado é o preparo que mais reduz o patinho na TACO: 100 g crus viram 60 g.'},
+{id:'alcatra',n:'Miolo de alcatra sem gordura',c:'Carnes',m:{grelhado:0.64,assado:0.68,cozido:0.72},t:['grelhado'],k:163,p:21.6,ch:0,g:7.8,f:0},
+{id:'contrafile',n:'Contrafilé com gordura',c:'Carnes',m:{grelhado:0.71,assado:0.73},t:['grelhado'],k:206,p:21.2,ch:0,g:12.8,f:0},
+{id:'musculo',n:'Músculo sem gordura',c:'Carnes',m:{cozido:0.74,assado:0.70},t:['cozido'],k:142,p:21.6,ch:0,g:5.5,f:0},
+{id:'costela',n:'Costela bovina',c:'Carnes',m:{assado:0.83,cozido:0.75},t:['assado'],k:358,p:16.7,ch:0,g:31.8,f:0,d:'A costela perde pouco peso porque a gordura derretida fica na peça. Fator alto, densidade calórica alta.'},
+{id:'carne_moida',n:'Carne moída (acém)',c:'Carnes',m:{cozido:0.71,refogado:0.72,assado:0.74,'air fryer':0.72},t:['cozido'],k:137,p:19.4,ch:0,g:5.9,f:0,med:['3 colheres de sopa',60,'cozido']},
+{id:'lagarto',n:'Lagarto',c:'Carnes',m:{cozido:0.68,assado:0.70},t:['cozido'],k:135,p:20.5,ch:0,g:5.2,f:0},
+{id:'file_mignon',n:'Filé mignon sem gordura',c:'Carnes',m:{grelhado:0.65,assado:0.70},t:['grelhado'],k:143,p:21.6,ch:0,g:5.6,f:0},
+{id:'picanha',n:'Picanha com gordura',c:'Carnes',m:{grelhado:0.74,assado:0.74},t:['grelhado'],k:213,p:18.8,ch:0,g:14.7,f:0},
+{id:'coxao_duro',n:'Coxão duro sem gordura',c:'Carnes',m:{cozido:0.73,assado:0.70},t:['cozido'],k:148,p:21.5,ch:0,g:6.2,f:0},
+{id:'paleta',n:'Paleta sem gordura',c:'Carnes',m:{cozido:0.75,assado:0.70},t:['cozido'],k:141,p:21,ch:0,g:5.7,f:0},
+{id:'fraldinha',n:'Fraldinha com gordura',c:'Carnes',m:{cozido:0.69,grelhado:0.72,assado:0.72},t:['cozido'],k:221,p:17.6,ch:0,g:16.1,f:0},
+{id:'maminha',n:'Maminha',c:'Carnes',m:{grelhado:0.86,assado:0.80},t:['grelhado'],k:153,p:20.9,ch:0,g:7,f:0},
+{id:'porco_lombo',n:'Lombo de porco',c:'Carnes',m:{assado:0.74,grelhado:0.70},t:['assado'],k:176,p:22.6,ch:0,g:8.8,f:0},
+{id:'porco_pernil',n:'Pernil de porco',c:'Carnes',m:{assado:0.65},t:['assado'],k:186,p:20.1,ch:0,g:11.1,f:0},
+{id:'porco_bisteca',n:'Bisteca de porco',c:'Carnes',m:{grelhado:0.67,assado:0.68},t:['grelhado'],k:164,p:21.5,ch:0,g:8,f:0},
+{id:'peito_frango',n:'Peito de frango sem pele',c:'Frango',m:{grelhado:0.70,cozido:0.73,assado:0.68,'air fryer':0.68,refogado:0.70},t:['grelhado','cozido'],k:119,p:21.5,ch:0,g:3,f:0,med:['1 filé médio',100,'grelhado'],d:'Grelhe em fogo médio-alto e vire uma única vez. Cozido em água o rendimento é maior que grelhado.'},
+{id:'sobrecoxa',n:'Sobrecoxa sem pele',c:'Frango',m:{assado:0.61,cozido:0.70,grelhado:0.65,'air fryer':0.63},t:['assado'],k:162,p:17.6,ch:0,g:9.6,f:0},
+{id:'coxa_frango',n:'Coxa com pele',c:'Frango',m:{assado:0.67,'air fryer':0.66,cozido:0.71},t:['assado'],k:161,p:17.1,ch:0,g:9.8,f:0},
+{id:'coxa_sem_pele',n:'Coxa sem pele',c:'Frango',m:{cozido:0.71,assado:0.65},t:['cozido'],k:120,p:17.8,ch:0,g:4.9,f:0},
+{id:'frango_inteiro',n:'Frango inteiro sem pele',c:'Frango',m:{assado:0.68,cozido:0.77},t:['assado','cozido'],k:129,p:20.6,ch:0,g:4.6,f:0},
+{id:'frango_desfiado',n:'Frango desfiado (peito cozido)',c:'Frango',m:{cozido:0.73},t:['cozido'],k:119,p:21.5,ch:0,g:3,f:0,med:['4 colheres de sopa',80,'cozido']},
+{id:'frango_moido',n:'Frango moído',c:'Frango',m:{refogado:0.70,cozido:0.68,'air fryer':0.70},k:143,p:19,ch:0,g:7,f:0},
+{id:'peru',n:'Peito de peru',c:'Frango',m:{assado:0.63},t:['assado'],k:94,p:18.1,ch:0,g:1.8,f:0},
+{id:'tilapia',n:'Filé de tilápia',c:'Peixes',m:{grelhado:0.78,assado:0.80,'air fryer':0.78,cozido:0.76},k:96,p:20.1,ch:0,g:1.7,f:0,d:'Peixe magro perde pouca água. Tempere e leve ao fogo já quente para não desmanchar.'},
+{id:'salmao',n:'Salmão sem pele',c:'Peixes',m:{grelhado:0.74,assado:0.76,'air fryer':0.74},t:['grelhado'],k:170,p:19.3,ch:0,g:9.7,f:0},
+{id:'merluza',n:'Filé de merluza',c:'Peixes',m:{assado:0.61,cozido:0.75,grelhado:0.65},t:['assado'],k:89,p:16.6,ch:0,g:2,f:0},
+{id:'abadejo',n:'Filé de abadejo',c:'Peixes',m:{cozido:0.67,assado:0.53,grelhado:0.47},t:['cozido','assado','grelhado'],k:59,p:13.1,ch:0,g:0.4,f:0,d:'Peixe branco magro: grelhado reduz quase pela metade. Vale pesar cru sempre.'},
+{id:'pintado',n:'Pintado',c:'Peixes',m:{grelhado:0.57,assado:0.46},t:['grelhado','assado'],k:91,p:18.6,ch:0,g:1.3,f:0},
+{id:'cacao',n:'Cação em posta',c:'Peixes',m:{cozido:0.77},t:['cozido'],k:83,p:17.9,ch:0,g:0.8,f:0},
+{id:'sardinha',n:'Sardinha (limpa)',c:'Peixes',m:{assado:0.75,grelhado:0.72,'air fryer':0.74},k:130,p:21,ch:0,g:4.6,f:0},
+{id:'atum_fresco',n:'Atum fresco',c:'Peixes',m:{grelhado:0.72,assado:0.74},k:118,p:25.7,ch:0,g:0.9,f:0},
+{id:'camarao',n:'Camarão limpo',c:'Peixes',m:{cozido:0.51,grelhado:0.60,refogado:0.62},t:['cozido'],k:47,p:10,ch:0,g:0.5,f:0,d:'Camarão encolhe muito: pela TACO, 100 g crus rendem cerca de 51 g cozidos.'},
+{id:'ovo',n:'Ovo de galinha (sem casca)',c:'Ovos',m:{cozido:1.00,grelhado:0.67,'air fryer':0.75},t:['grelhado'],k:143,p:13,ch:1.6,g:8.9,f:0,med:['1 ovo grande',50,'cru'],d:'Cozido na casca o peso não muda. Frito, a TACO registra 0,67 — perde um terço do peso.'},
+{id:'clara',n:'Clara de ovo',c:'Ovos',m:{cozido:1.00,grelhado:0.85},k:43,p:10.9,ch:0.7,g:0.2,f:0,med:['1 clara grande',33,'cru']},
+{id:'batata',n:'Batata inglesa',c:'Raízes',m:{cozido:0.95,assado:0.75,'air fryer':0.70,refogado:0.80},k:52,p:1.8,ch:11.9,g:0,f:1.3,med:['1 batata média',130,'cru'],d:'Assada e na air fryer a perda é só de água. Se for comer fria, o índice glicêmico cai.'},
+{id:'batata_doce',n:'Batata-doce',c:'Raízes',m:{cozido:0.95,assado:0.78,'air fryer':0.72},k:118,p:1.3,ch:28.2,g:0.1,f:2.6,med:['1 unidade pequena',150,'cru']},
+{id:'mandioca',n:'Mandioca',c:'Raízes',m:{cozido:1.22,assado:0.85,'air fryer':0.80},t:['cozido'],k:151,p:1.1,ch:36.2,g:0.3,f:1.9,d:'A mandioca absorve água ao cozinhar: pela TACO, 100 g cruas viram cerca de 122 g cozidas.'},
+{id:'inhame',n:'Inhame',c:'Raízes',m:{cozido:1.05,assado:0.85},k:97,p:2.1,ch:23.2,g:0.2,f:1.8},
+{id:'cara',n:'Cará',c:'Raízes',m:{cozido:1.25,assado:0.85},t:['cozido'],k:96,p:2.3,ch:23,g:0.1,f:7.3},
+{id:'mandioquinha',n:'Mandioquinha / batata-baroa',c:'Raízes',m:{cozido:1.27,assado:0.80,'air fryer':0.78},t:['cozido'],k:101,p:1,ch:24,g:0.2,f:2.1},
+{id:'abobora',n:'Abóbora cabotiá',c:'Legumes',m:{cozido:0.85,assado:0.75,refogado:0.80},t:['cozido'],k:39,p:1.7,ch:8.4,g:0.5,f:2.2},
+{id:'beterraba',n:'Beterraba',c:'Legumes',m:{cozido:0.95,assado:0.80},k:49,p:1.9,ch:11.1,g:0.1,f:3.4},
+{id:'brocolis',n:'Brócolis',c:'Legumes',m:{cozido:0.90,refogado:0.75,'air fryer':0.70,assado:0.72},k:25,p:3.6,ch:4.4,g:0.3,f:2.9,med:['1 xícara de floretes',85,'cozido'],d:'No vapor, 5 minutos bastam. Cozimento longo em água leva embora vitamina C e potássio.'},
+{id:'couve_flor',n:'Couve-flor',c:'Legumes',m:{cozido:0.95,assado:0.75,'air fryer':0.72,refogado:0.80},k:23,p:1.9,ch:4.5,g:0.2,f:2.4},
+{id:'cenoura',n:'Cenoura',c:'Legumes',m:{cozido:0.95,assado:0.75,refogado:0.82},k:34,p:1.3,ch:7.7,g:0.2,f:3.2,med:['1 unidade média',90,'cru']},
+{id:'abobrinha',n:'Abobrinha italiana',c:'Legumes',m:{refogado:0.94,grelhado:0.65,assado:0.60,cozido:0.85},t:['refogado'],k:19,p:1.1,ch:4.3,g:0.1,f:1.4,d:'Refogada perde pouco peso (a água solta fica na panela). Grelhada ou assada, a perda é bem maior.'},
+{id:'berinjela',n:'Berinjela',c:'Legumes',m:{assado:0.65,grelhado:0.65,refogado:0.70,'air fryer':0.62},k:20,p:1.2,ch:4.4,g:0.1,f:2.9},
+{id:'chuchu',n:'Chuchu',c:'Legumes',m:{cozido:0.96,refogado:0.80},t:['cozido'],k:17,p:0.7,ch:4.1,g:0.1,f:1.3},
+{id:'couve',n:'Couve manteiga',c:'Legumes',m:{refogado:0.49,cozido:0.60},t:['refogado'],k:27,p:2.9,ch:4.3,g:0.5,f:3.1,d:'Refogada perde metade do peso: 100 g cruas viram cerca de 49 g.'},
+{id:'espinafre',n:'Espinafre',c:'Legumes',m:{refogado:0.45,cozido:0.55},t:['refogado'],k:16,p:2,ch:2.6,g:0.3,f:2.1,d:'Reduz para menos da metade. Um maço grande cru vira pouco mais de uma xícara refogada.'},
+{id:'vagem',n:'Vagem',c:'Legumes',m:{cozido:0.95,refogado:0.85,'air fryer':0.78},k:25,p:1.8,ch:5,g:0.2,f:2.4},
+{id:'repolho',n:'Repolho',c:'Legumes',m:{cozido:0.85,refogado:0.88},t:['refogado'],k:25,p:1.4,ch:5.8,g:0.2,f:1.9},
+{id:'tomate',n:'Tomate',c:'Legumes',m:{assado:0.60,refogado:0.70},k:15,p:1.1,ch:3.1,g:0.2,f:1.2},
+{id:'cebola',n:'Cebola',c:'Legumes',m:{refogado:0.65,assado:0.60},k:39,p:1.7,ch:8.9,g:0.1,f:2.2},
+{id:'pimentao',n:'Pimentão',c:'Legumes',m:{assado:0.70,refogado:0.75,grelhado:0.72},k:21,p:1.1,ch:4.9,g:0.2,f:2.6}
+];
+
+const PREP = {
+  cozido:{done:'já cozido', out:'cozido'},
+  grelhado:{done:'já grelhado', out:'grelhado'},
+  assado:{done:'já assado', out:'assado'},
+  refogado:{done:'já refogado', out:'refogado'},
+  'air fryer':{done:'já pronto na air fryer', out:'na air fryer'}
+};
+const CATS = ['Todos','Favoritos','Massas','Arroz e grãos','Cereais','Feijões','Carnes','Frango','Peixes','Ovos','Raízes','Legumes'];
+const norm = s => (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const fmt = n => { const r = n >= 100 ? Math.round(n) : Math.round(n*10)/10; return String(r).replace('.',','); };
+const fac = n => Number(n).toFixed(2).replace('.',',');
+const num = s => { const v = parseFloat(String(s).replace(',','.')); return isNaN(v)?0:v; };
+const clean = s => String(s).replace(/[^0-9.,]/g,'').slice(0,7);
+
+class Component extends DCLogic {
+  state = {view:'calc', q:'', cat:'Todos', foodId:'macarrao', method:'cozido', dir:'c2r', qtyStr:'100', pessoas:1, favs:[], hist:[], ov:{}, ovDraft:{}, ajQ:''};
+
+  componentDidMount(){
+    try{
+      const s = JSON.parse(localStorage.getItem('nutricalc.v1')||'{}');
+      this.setState(p=>({...p,
+        favs: Array.isArray(s.favs)?s.favs:[], hist: Array.isArray(s.hist)?s.hist:[],
+        ov: s.ov&&typeof s.ov==='object'?s.ov:{}, dir: s.dir||p.dir, pessoas: s.pessoas||1,
+        foodId: s.foodId||p.foodId, method: s.method||p.method,
+        qtyStr: (s.qtyStr!==undefined&&s.qtyStr!==null&&num(s.qtyStr)>0) ? String(s.qtyStr) : '100'}));
+    }catch(e){}
+  }
+  persist(extra){
+    const s = Object.assign({}, this.state, extra||{});
+    try{ localStorage.setItem('nutricalc.v1', JSON.stringify({favs:s.favs,hist:s.hist,ov:s.ov,dir:s.dir,pessoas:s.pessoas,foodId:s.foodId,method:s.method,qtyStr: num(s.qtyStr)>0 ? s.qtyStr : '100'})); }catch(e){}
+  }
+  set(patch){ this.setState(patch, ()=>this.persist()); }
+
+  food(){ return DB.find(f=>f.id===this.state.foodId) || DB[0]; }
+  methodsOf(f){ return Object.keys(f.m); }
+  factor(f, m){ const o = this.state.ov[f.id+'|'+m]; return (o===undefined||o===null||isNaN(o)) ? f.m[m] : Number(o); }
+  src(f, m){
+    if(this.state.ov[f.id+'|'+m]!==undefined) return 'seu ajuste';
+    return (f.t && f.t.indexOf(m)>=0) ? 'TACO' : 'referência';
+  }
+  activeMethod(f){ const ms = this.methodsOf(f); return ms.indexOf(this.state.method)>=0 ? this.state.method : ms[0]; }
+
+  chip(active){ return active ? {bg:'#8e947e', fg:'#f3f2ed', bd:'#8e947e'} : {bg:'#fff', fg:'#5c6650', bd:'#d3d8c8'}; }
+
+  pickFood(id){
+    const f = DB.find(x=>x.id===id);
+    const ms = this.methodsOf(f);
+    this.set({foodId:id, method: ms.indexOf(this.state.method)>=0 ? this.state.method : ms[0]});
+  }
+  toggleFav(id){
+    const favs = this.state.favs.indexOf(id)>=0 ? this.state.favs.filter(x=>x!==id) : this.state.favs.concat([id]);
+    this.set({favs});
+  }
+
+  renderVals(){
+    const st = this.state, f = this.food(), method = this.activeMethod(f), fct = this.factor(f, method);
+    const P = PREP[method] || {done:'já pronto', out:method};
+    const qty = num(st.qtyStr), ppl = st.pessoas;
+    const toRaw = st.dir === 'c2r';
+    const rawG = (toRaw ? qty/fct : qty) * ppl;
+    const outG = toRaw ? rawG : qty*fct*ppl;
+    const inTotal = qty*ppl;
+
+    const macroOf = k => fmt(rawG * f[k] / 100);
+    const q = norm(st.q);
+    let list = DB.filter(x => (!q || norm(x.n).indexOf(q)>=0 || norm(x.c).indexOf(q)>=0));
+    if(st.cat==='Favoritos') list = list.filter(x=>st.favs.indexOf(x.id)>=0);
+    else if(st.cat!=='Todos') list = list.filter(x=>x.c===st.cat);
+
+    const medOk = f.med && (f.med[2]==='cru' || f.med[2]===method);
+    const medida = medOk ? (()=>{
+      const [label, gramas, estado] = f.med;
+      const base = estado==='cru' ? rawG : (toRaw ? qty*ppl : outG);
+      const n = base/gramas;
+      return 'Referência: ' + label + ' ≈ ' + gramas + ' g ' + estado + ' — dá cerca de ' + fmt(n) + ' ' + (n>=1.95?'porções':'porção') + '.';
+    })() : '';
+
+    const aq = norm(st.ajQ);
+    const ajList = DB.filter(x => !aq || norm(x.n).indexOf(aq)>=0 || norm(x.c).indexOf(aq)>=0).map(x=>({
+      n:x.n, c:x.c,
+      rows: this.methodsOf(x).map(m=>{
+        const key = x.id+'|'+m, dirty = st.ov[key]!==undefined;
+        const draft = st.ovDraft[key];
+        return {label:m.charAt(0).toUpperCase()+m.slice(1),
+          value: draft!==undefined ? draft : fac(this.factor(x,m)),
+          bd: dirty?'#8e947e':'#e2e5da', bg: dirty?'#f0f2ea':'#fbfbf8', src: this.src(x,m),
+          on: e=>{
+            const raw = clean(e.target.value);
+            const ovDraft = Object.assign({}, this.state.ovDraft); ovDraft[key] = raw;
+            const v = num(raw), ov = Object.assign({}, this.state.ov);
+            if(v>0) ov[key] = v; else delete ov[key];
+            this.set({ovDraft, ov});
+          }};
+      })
+    }));
+
+    return {
+      isCalc: st.view==='calc', isAjustes: st.view==='ajustes',
+      viewBtn: st.view==='calc' ? 'Ajustar fatores' : 'Voltar',
+      toggleView: ()=>this.setState({view: st.view==='calc'?'ajustes':'calc'}),
+
+      q: st.q, onQ: e=>this.setState({q:e.target.value}),
+      cats: CATS.map(c=>Object.assign({label:c, on:()=>this.setState({cat:c})}, this.chip(st.cat===c))),
+      list: list.map(x=>{
+        const isFav = st.favs.indexOf(x.id)>=0, sel = x.id===st.foodId;
+        const ms = this.methodsOf(x);
+        return {n:x.n, sub: x.c + ' · ' + ms.map(m=>m+' ×'+fac(this.factor(x,m))).join('  ·  '),
+          rowBg: sel?'#f0f2ea':'#fff', star: isFav?'★':'☆', starFg: isFav?'#8e947e':'#cfd3c4',
+          pick: ()=>this.pickFood(x.id), fav: ()=>this.toggleFav(x.id)};
+      }),
+      listCount: list.length + (list.length===1?' alimento':' alimentos'),
+      listEmpty: list.length===0,
+
+      hasFood: true, foodName: f.n, foodCat: f.c,
+      methods: this.methodsOf(f).map(m=>Object.assign(
+        {label: m.charAt(0).toUpperCase()+m.slice(1), on:()=>this.set({method:m})}, this.chip(m===method))),
+      dirs: [
+        Object.assign({label:P.done.charAt(0).toUpperCase()+P.done.slice(1)+' — quero saber quanto pesar cru', on:()=>this.set({dir:'c2r'})}, this.chip(toRaw)),
+        Object.assign({label:'Ainda cru — quero saber quanto rende '+P.out, on:()=>this.set({dir:'r2c'})}, this.chip(!toRaw))
+      ],
+      qtyLabel: toRaw ? ('Quanto você quer no prato ('+P.done+')') : 'Quanto você vai pesar cru',
+      qtyStr: st.qtyStr, onQty: e=>this.setState({qtyStr: clean(e.target.value)}, ()=>this.persist()),
+      quick: [50,80,100,120,150,200].map(v=>({label:v+' g', on:()=>this.set({qtyStr:String(v)})})),
+      people: [1,2,3].map(v=>Object.assign({label:String(v), on:()=>this.set({pessoas:v})}, this.chip(v===ppl))),
+      peopleWord: ppl===1 ? 'pessoa' : 'pessoas',
+
+      outTitle: toRaw ? 'Pese cru' : ('Rende '+P.out),
+      outValue: fmt(outG),
+      outLine: toRaw
+        ? fmt(rawG)+' g crus rendem '+fmt(inTotal)+' g de '+f.n.toLowerCase()+' '+P.out+(ppl>1?' — total para '+ppl+' pessoas.':'.')+' Fator ×'+fac(fct)+'.'
+        : fmt(inTotal)+' g crus viram '+fmt(outG)+' g '+P.out+(ppl>1?', total para '+ppl+' pessoas.':'.')+' Fator ×'+fac(fct)+'.',
+      fonte: 'Fator de cocção ×'+fac(fct)+' — fonte: '+this.src(f, method)+'.',
+      hasMedida: !!medida, medida,
+      flip: ()=>this.set({dir: toRaw?'r2c':'c2r', qtyStr: String(Math.round(toRaw?rawG/ppl:outG/ppl))}),
+      saveHist: ()=>{
+        const entry = {id:f.id, method, dir:st.dir, qty:st.qtyStr, pessoas:ppl,
+          n:f.n, line:(toRaw?fmt(inTotal)+' g '+P.out+' → '+fmt(rawG)+' g crus':fmt(inTotal)+' g crus → '+fmt(outG)+' g '+P.out)};
+        const hist = [entry].concat(this.state.hist.filter(h=>!(h.id===entry.id&&h.method===entry.method&&h.qty===entry.qty&&h.dir===entry.dir))).slice(0,6);
+        this.set({hist});
+      },
+      hist: st.hist.map(h=>({n:h.n, line:h.line, on:()=>this.set({foodId:h.id, method:h.method, dir:h.dir, qtyStr:String(h.qty), pessoas:h.pessoas||1})})),
+      hasHist: st.hist.length>0,
+      clearHist: ()=>this.set({hist:[]}),
+
+      macroTitle: 'Nutrientes da porção pronta — '+fmt(toRaw?inTotal:outG)+' g '+P.out+', equivalente a '+fmt(rawG)+' g crus',
+      macros: [{l:'kcal', v:macroOf('k')},{l:'Proteína', v:macroOf('p')+' g'},{l:'Carboidrato', v:macroOf('ch')+' g'},{l:'Gordura', v:macroOf('g')+' g'},{l:'Fibra', v:macroOf('f')+' g'}],
+      hasDica: !!f.d, dica: f.d||'',
+
+      ajQ: st.ajQ, onAjQ: e=>this.setState({ajQ:e.target.value}), ajList,
+      ovCount: Object.keys(st.ov).length ? Object.keys(st.ov).length+' fator(es) ajustado(s) por você' : 'Nenhum fator alterado — todos no padrão.',
+      resetOv: ()=>this.set({ov:{}, ovDraft:{}})
+    };
+  }
+}
+
+</script>
+</body>
+</html>
