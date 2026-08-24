@@ -121,6 +121,28 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){
 </sc-if>
 </div>
 
+<sc-if value="{{ hasCompras }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:22px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;gap:10px">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8e947e">Lista de compras</div>
+<button onClick="{{ clearCompras }}" style="border:none;background:transparent;color:#8e947e;font-size:11px;cursor:pointer;text-decoration:underline;padding:6px 0">limpar</button>
+</div>
+<div style="border:1px solid #e2e5da;border-radius:3px;background:#fff;overflow:hidden">
+<sc-for list="{{ compras }}" as="cp" hint-placeholder-count="2">
+<div style="display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px;border-bottom:1px solid #f0f1eb">
+<div style="flex:1;min-width:0">
+<div style="font-size:14px;color:#3f4636;line-height:1.3">{{ cp.n }}</div>
+<div style="font-size:11px;color:#8e947e;margin-top:3px">{{ cp.det }}</div>
+</div>
+<div style="font-family:'Poppins',sans-serif;font-weight:300;font-size:16px;color:#3f4636;white-space:nowrap">{{ cp.g }}</div>
+<button onClick="{{ cp.rm }}" title="Remover" style="flex:none;width:30px;height:30px;border:none;background:transparent;cursor:pointer;font-size:16px;line-height:1;color:#c7cbb9">×</button>
+</div>
+</sc-for>
+<div style="padding:11px 14px;background:#f7f7f3;font-size:12px;color:#8e947e;letter-spacing:.03em">{{ comprasTotal }}</div>
+</div>
+</div>
+</sc-if>
+
 <sc-if value="{{ hasHist }}" hint-placeholder-val="{{ false }}">
 <div style="margin-top:22px">
 <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px">
@@ -146,6 +168,11 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){
 <div style="padding:22px 24px 20px;border-bottom:1px solid #f0f1eb">
 <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8e947e;margin-bottom:8px">{{ foodCat }}</div>
 <div style="font-family:'Poppins',sans-serif;font-weight:300;font-size:27px;line-height:1.2;color:#3f4636">{{ foodName }}</div>
+<div style="display:flex;gap:0;margin-top:18px;border:1px solid #d3d8c8;border-radius:2px;overflow:hidden;width:fit-content;max-width:100%;flex-wrap:wrap">
+<sc-for list="{{ modos }}" as="mo" hint-placeholder-count="2">
+<button onClick="{{ mo.on }}" style="padding:11px 18px;min-height:44px;border:none;font-size:13px;cursor:pointer;white-space:nowrap;background:{{ mo.bg }};color:{{ mo.fg }}">{{ mo.label }}</button>
+</sc-for>
+</div>
 </div>
 
 <div style="padding:20px 24px;border-bottom:1px solid #f0f1eb;display:flex;flex-direction:column;gap:18px">
@@ -181,13 +208,31 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){
 </div>
 </div>
 <div style="display:flex;align-items:center;gap:12px;margin-top:18px;flex-wrap:wrap">
-<span style="font-size:12.5px;color:#8e947e">Cozinhar para</span>
+<span style="font-size:12.5px;color:#8e947e">{{ qtdLabel }}</span>
+<sc-if value="{{ isRefeicao }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
 <div style="display:flex;gap:6px">
-<sc-for list="{{ people }}" as="p" hint-placeholder-count="3">
-<button onClick="{{ p.on }}" style="width:40px;height:40px;border-radius:2px;font-size:14px;cursor:pointer;border:1px solid {{ p.bd }};background:{{ p.bg }};color:{{ p.fg }}">{{ p.label }}</button>
+<sc-for list="{{ people }}" as="pp" hint-placeholder-count="3">
+<button onClick="{{ pp.on }}" style="width:46px;height:46px;border-radius:2px;font-size:15px;cursor:pointer;border:1px solid {{ pp.bd }};background:{{ pp.bg }};color:{{ pp.fg }}">{{ pp.label }}</button>
 </sc-for>
 </div>
 <span style="font-size:12.5px;color:#8e947e">{{ peopleWord }}</span>
+</div>
+</sc-if>
+<sc-if value="{{ isMarmita }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+<sc-for list="{{ marmitaOpts }}" as="mo" hint-placeholder-count="3">
+<button onClick="{{ mo.on }}" style="display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 14px;min-height:46px;border-radius:2px;cursor:pointer;border:1px solid {{ mo.bd }};background:{{ mo.bg }};color:{{ mo.fg }}">
+<span style="font-size:15px;line-height:1.1">{{ mo.label }}</span>
+<span style="font-size:9.5px;letter-spacing:.04em;opacity:.75;white-space:nowrap">{{ mo.sub }}</span>
+</button>
+</sc-for>
+<label style="display:flex;align-items:center;gap:7px;border:1px solid #d3d8c8;background:#fbfbf8;border-radius:2px;padding:0 12px;min-height:46px">
+<input type="text" inputMode="numeric" value="{{ marmitasStr }}" onChange="{{ onMarmitas }}" aria-label="Número de marmitas" style="width:44px;border:none;background:transparent;font-size:16px;color:#3f4636;text-align:center">
+<span style="font-size:12px;color:#8e947e">outra</span>
+</label>
+</div>
+</sc-if>
 </div>
 </div>
 
@@ -195,7 +240,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){
 <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin-bottom:6px">{{ outTitle }}</div>
 <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
 <span style="font-family:'Poppins',sans-serif;font-weight:300;font-size:clamp(44px,9vw,64px);line-height:1.05">{{ outValue }}</span>
-<span style="font-size:20px;opacity:.9">g</span>
+<span style="font-size:20px;opacity:.9">{{ outUnit }}</span>
 </div>
 <div style="font-size:14px;line-height:1.6;margin-top:12px;opacity:.95;max-width:440px">{{ outLine }}</div>
 <div style="font-size:11.5px;letter-spacing:.04em;margin-top:8px;opacity:.75">{{ fonte }}</div>
@@ -204,7 +249,8 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){
 </sc-if>
 <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
 <button onClick="{{ saveHist }}" style="border:1px solid rgba(243,242,237,.6);background:transparent;color:#f3f2ed;padding:10px 16px;border-radius:2px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#f3f2ed;color:#8e947e">Guardar no histórico</button>
-<button onClick="{{ flip }}" style="border:1px solid rgba(243,242,237,.6);background:transparent;color:#f3f2ed;padding:10px 16px;border-radius:2px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#f3f2ed;color:#8e947e">Inverter</button>
+<button onClick="{{ addCompra }}" style="border:1px solid rgba(243,242,237,.6);background:transparent;color:#f3f2ed;padding:10px 16px;min-height:44px;border-radius:2px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#f3f2ed;color:#8e947e">Add à lista de compras</button>
+<button onClick="{{ flip }}" style="border:1px solid rgba(243,242,237,.6);background:transparent;color:#f3f2ed;padding:10px 16px;min-height:44px;border-radius:2px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" style-hover="background:#f3f2ed;color:#8e947e">Inverter</button>
 </div>
 </div>
 
@@ -411,9 +457,15 @@ const fmt = n => { const r = n >= 100 ? Math.round(n) : Math.round(n*10)/10; ret
 const fac = n => Number(n).toFixed(2).replace('.',',');
 const num = s => { const v = parseFloat(String(s).replace(',','.')); return isNaN(v)?0:v; };
 const clean = s => String(s).replace(/[^0-9.,]/g,'').slice(0,7);
+const cleanInt = s => String(s).replace(/[^0-9]/g,'').slice(0,3);
+// Acima de 1 kg, mostra em quilos
+const peso = g => g >= 1000
+  ? {v: String(Math.round(g/10)/100).replace('.',','), u:'kg'}
+  : {v: fmt(g), u:'g'};
+const pesoTxt = g => { const p = peso(g); return p.v + ' ' + p.u; };
 
 class Component extends DCLogic {
-  state = {view:'calc', q:'', cat:'Todos', foodId:'macarrao', method:'cozido', dir:'c2r', qtyStr:'100', pessoas:1, favs:[], hist:[], ov:{}, ovDraft:{}, ajQ:''};
+  state = {view:'calc', q:'', cat:'Todos', foodId:'macarrao', method:'cozido', dir:'c2r', qtyStr:'100', modo:'refeicao', pessoas:1, marmitas:7, marmitasStr:'7', compras:[], favs:[], hist:[], ov:{}, ovDraft:{}, ajQ:''};
 
   componentDidMount(){
     try{
@@ -422,12 +474,16 @@ class Component extends DCLogic {
         favs: Array.isArray(s.favs)?s.favs:[], hist: Array.isArray(s.hist)?s.hist:[],
         ov: s.ov&&typeof s.ov==='object'?s.ov:{}, dir: s.dir||p.dir, pessoas: s.pessoas||1,
         foodId: s.foodId||p.foodId, method: s.method||p.method,
-        qtyStr: (s.qtyStr!==undefined&&s.qtyStr!==null&&num(s.qtyStr)>0) ? String(s.qtyStr) : '100'}));
+        qtyStr: (s.qtyStr!==undefined&&s.qtyStr!==null&&num(s.qtyStr)>0) ? String(s.qtyStr) : '100',
+        modo: s.modo==='marmita'?'marmita':'refeicao',
+        marmitas: s.marmitas>0 ? s.marmitas : 7,
+        marmitasStr: s.marmitas>0 ? String(s.marmitas) : '7',
+        compras: Array.isArray(s.compras)?s.compras:[]}));
     }catch(e){}
   }
   persist(extra){
     const s = Object.assign({}, this.state, extra||{});
-    try{ localStorage.setItem('nutricalc.v1', JSON.stringify({favs:s.favs,hist:s.hist,ov:s.ov,dir:s.dir,pessoas:s.pessoas,foodId:s.foodId,method:s.method,qtyStr: num(s.qtyStr)>0 ? s.qtyStr : '100'})); }catch(e){}
+    try{ localStorage.setItem('nutricalc.v1', JSON.stringify({favs:s.favs,hist:s.hist,ov:s.ov,dir:s.dir,pessoas:s.pessoas,foodId:s.foodId,method:s.method,qtyStr: num(s.qtyStr)>0 ? s.qtyStr : '100',modo:s.modo,marmitas:s.marmitas,compras:s.compras})); }catch(e){}
   }
   set(patch){ this.setState(patch, ()=>this.persist()); }
 
@@ -455,7 +511,10 @@ class Component extends DCLogic {
   renderVals(){
     const st = this.state, f = this.food(), method = this.activeMethod(f), fct = this.factor(f, method);
     const P = PREP[method] || {done:'já pronto', out:method};
-    const qty = num(st.qtyStr), ppl = st.pessoas;
+    const isMarmita = st.modo === 'marmita';
+    const qty = num(st.qtyStr);
+    const ppl = Math.max(1, isMarmita ? (st.marmitas||1) : st.pessoas);
+    const unidade = isMarmita ? (ppl===1?'marmita':'marmitas') : (ppl===1?'pessoa':'pessoas');
     const toRaw = st.dir === 'c2r';
     const rawG = (toRaw ? qty/fct : qty) * ppl;
     const outG = toRaw ? rawG : qty*fct*ppl;
@@ -470,9 +529,11 @@ class Component extends DCLogic {
     const medOk = f.med && (f.med[2]==='cru' || f.med[2]===method);
     const medida = medOk ? (()=>{
       const [label, gramas, estado] = f.med;
-      const base = estado==='cru' ? rawG : (toRaw ? qty*ppl : outG);
+      // Por porção (uma pessoa ou uma marmita), para casar com os macros
+      const base = (estado==='cru' ? rawG : (toRaw ? qty*ppl : outG)) / ppl;
       const n = base/gramas;
-      return 'Referência: ' + label + ' ≈ ' + gramas + ' g ' + estado + ' — dá cerca de ' + fmt(n) + ' ' + (n>=1.95?'porções':'porção') + '.';
+      const alvo = isMarmita ? 'Em cada marmita' : 'Na porção';
+      return alvo + ': cerca de ' + fmt(n) + ' × ' + label + ' (1 ≈ ' + gramas + ' g ' + estado + ').';
     })() : '';
 
     const aq = norm(st.ajQ);
@@ -518,32 +579,53 @@ class Component extends DCLogic {
         Object.assign({label:P.done.charAt(0).toUpperCase()+P.done.slice(1)+' — quero saber quanto pesar cru', on:()=>this.set({dir:'c2r'})}, this.chip(toRaw)),
         Object.assign({label:'Ainda cru — quero saber quanto rende '+P.out, on:()=>this.set({dir:'r2c'})}, this.chip(!toRaw))
       ],
-      qtyLabel: toRaw ? ('Quanto você quer no prato ('+P.done+')') : 'Quanto você vai pesar cru',
+      qtyLabel: (toRaw ? ('Quanto você quer no prato ('+P.done+')') : 'Quanto você vai pesar cru') + (isMarmita ? ' — por marmita' : ''),
       qtyStr: st.qtyStr, onQty: e=>this.setState({qtyStr: clean(e.target.value)}, ()=>this.persist()),
       quick: [50,80,100,120,150,200].map(v=>({label:v+' g', on:()=>this.set({qtyStr:String(v)})})),
-      people: [1,2,3].map(v=>Object.assign({label:String(v), on:()=>this.set({pessoas:v})}, this.chip(v===ppl))),
-      peopleWord: ppl===1 ? 'pessoa' : 'pessoas',
 
-      outTitle: toRaw ? 'Pese cru' : ('Rende '+P.out),
-      outValue: fmt(outG),
+      modos: [
+        Object.assign({label:'Refeição agora', on:()=>this.set({modo:'refeicao'})}, this.chip(!isMarmita)),
+        Object.assign({label:'Marmitas da semana', on:()=>this.set({modo:'marmita'})}, this.chip(isMarmita))
+      ],
+      isMarmita, isRefeicao: !isMarmita,
+      qtdLabel: isMarmita ? 'Quantas marmitas' : 'Cozinhar para',
+      people: [1,2,3].map(v=>Object.assign({label:String(v), on:()=>this.set({pessoas:v})}, this.chip(v===st.pessoas))),
+      peopleWord: st.pessoas===1 ? 'pessoa' : 'pessoas',
+      marmitaOpts: [{n:5,sub:'semana útil'},{n:7,sub:'uma semana'},{n:14,sub:'duas semanas'}].map(o=>Object.assign(
+        {label:String(o.n), sub:o.sub, on:()=>this.set({marmitas:o.n, marmitasStr:String(o.n)})}, this.chip(o.n===st.marmitas))),
+      marmitasStr: st.marmitasStr,
+      onMarmitas: e=>{ const raw = cleanInt(e.target.value); this.set({marmitasStr: raw, marmitas: Math.max(1, parseInt(raw||'0',10)||1)}); },
+
+      outTitle: (toRaw ? 'Pese cru' : ('Rende '+P.out)) + (isMarmita ? ' — total das '+ppl+' marmitas' : ''),
+      outValue: peso(outG).v, outUnit: peso(outG).u,
       outLine: toRaw
-        ? fmt(rawG)+' g crus rendem '+fmt(inTotal)+' g de '+f.n.toLowerCase()+' '+P.out+(ppl>1?' — total para '+ppl+' pessoas.':'.')+' Fator ×'+fac(fct)+'.'
-        : fmt(inTotal)+' g crus viram '+fmt(outG)+' g '+P.out+(ppl>1?', total para '+ppl+' pessoas.':'.')+' Fator ×'+fac(fct)+'.',
+        ? pesoTxt(rawG)+' crus rendem '+pesoTxt(inTotal)+' de '+f.n.toLowerCase()+' '+P.out+(ppl>1?' — total para '+ppl+' '+unidade+', '+fmt(qty)+' g em cada.':'.')+' Fator ×'+fac(fct)+'.'
+        : pesoTxt(inTotal)+' crus viram '+pesoTxt(outG)+' '+P.out+(ppl>1?', total para '+ppl+' '+unidade+', '+fmt(outG/ppl)+' g em cada.':'.')+' Fator ×'+fac(fct)+'.',
       fonte: 'Valor aproximado — fator de cocção ×'+fac(fct)+'. O rendimento real varia com o corte, o ponto e o tempo de fogo.',
       hasMedida: !!medida, medida,
       flip: ()=>this.set({dir: toRaw?'r2c':'c2r', qtyStr: String(Math.round(toRaw?rawG/ppl:outG/ppl))}),
       saveHist: ()=>{
         const entry = {id:f.id, method, dir:st.dir, qty:st.qtyStr, pessoas:ppl,
-          n:f.n, line:(toRaw?fmt(inTotal)+' g '+P.out+' → '+fmt(rawG)+' g crus':fmt(inTotal)+' g crus → '+fmt(outG)+' g '+P.out)};
+          n:f.n, line:(toRaw?pesoTxt(inTotal)+' '+P.out+' → '+pesoTxt(rawG)+' crus':pesoTxt(inTotal)+' crus → '+pesoTxt(outG)+' '+P.out)+' · '+ppl+' '+unidade};
         const hist = [entry].concat(this.state.hist.filter(h=>!(h.id===entry.id&&h.method===entry.method&&h.qty===entry.qty&&h.dir===entry.dir))).slice(0,6);
         this.set({hist});
       },
-      hist: st.hist.map(h=>({n:h.n, line:h.line, on:()=>this.set({foodId:h.id, method:h.method, dir:h.dir, qtyStr:String(h.qty), pessoas:h.pessoas||1})})),
+      hist: st.hist.map(h=>({n:h.n, line:h.line, on:()=>this.set({foodId:h.id, method:h.method, dir:h.dir, qtyStr:String(h.qty)})})),
       hasHist: st.hist.length>0,
       clearHist: ()=>this.set({hist:[]}),
 
-      macroTitle: 'Nutrientes da porção pronta — '+fmt(toRaw?inTotal:outG)+' g '+P.out+', equivalente a '+fmt(rawG)+' g crus',
-      macros: [{l:'kcal', v:macroOf('k')},{l:'Proteína', v:macroOf('p')+' g'},{l:'Carboidrato', v:macroOf('ch')+' g'},{l:'Gordura', v:macroOf('g')+' g'},{l:'Fibra', v:macroOf('f')+' g'}],
+      addCompra: ()=>{
+        const item = {key:f.id+'|'+method, n:f.n, g:Math.round(rawG), det:(isMarmita?ppl+' marmitas':ppl+' '+unidade)+' · '+P.out};
+        const compras = this.state.compras.filter(c=>c.key!==item.key).concat([item]);
+        this.set({compras});
+      },
+      compras: st.compras.map(c=>({n:c.n, det:c.det, g:pesoTxt(c.g), rm:()=>this.set({compras:this.state.compras.filter(x=>x.key!==c.key)})})),
+      hasCompras: st.compras.length>0,
+      comprasTotal: pesoTxt(st.compras.reduce((a,c)=>a+c.g,0)) + ' no total',
+      clearCompras: ()=>this.set({compras:[]}),
+
+      macroTitle: 'Nutrientes '+(isMarmita?'de uma marmita':'da porção pronta')+' — '+fmt((toRaw?inTotal:outG)/ppl)+' g '+P.out+', equivalente a '+fmt(rawG/ppl)+' g crus',
+      macros: [{l:'kcal', v:fmt(rawG/ppl*f.k/100)},{l:'Proteína', v:fmt(rawG/ppl*f.p/100)+' g'},{l:'Carboidrato', v:fmt(rawG/ppl*f.ch/100)+' g'},{l:'Gordura', v:fmt(rawG/ppl*f.g/100)+' g'},{l:'Fibra', v:fmt(rawG/ppl*f.f/100)+' g'}],
       hasDica: !!f.d, dica: f.d||'',
 
       ajQ: st.ajQ, onAjQ: e=>this.setState({ajQ:e.target.value}), ajList,
